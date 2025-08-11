@@ -3,6 +3,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import { errorHandler } from './middleware/errorHandler';
 import { sanitizeInput, validateContentType } from './middleware/sanitization';
+import userRoutes from './routes/userRoutes';
+import authRoutes from './routes/authRoutes';
 
 const app = express();
 
@@ -32,6 +34,10 @@ if (process.env.NODE_ENV === 'development') {
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
+
+// API routes
+app.use('/v1/users', userRoutes);
+app.use('/v1/auth', authRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {
