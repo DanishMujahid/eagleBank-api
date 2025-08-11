@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  eaglebank-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: eaglebank-api-dev
+    ports:
+      - '3000:3000'
+      - '5555:5555'
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/dist
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - JWT_SECRET=dev-secret-key-change-in-production
+      - DATABASE_URL=file:./prisma/dev.db
+    working_dir: /app
+    command: npm run dev
+    stdin_open: true
+    tty: true
+    networks:
+      - eaglebank-network
+
+  # Optional: Add a database service if you want to use PostgreSQL later
+  # postgres:
+  #   image: postgres:15-alpine
+  #   container_name: eaglebank-postgres
+  #   environment:
+  #     POSTGRES_DB: eaglebank
+  #     POSTGRES_USER: eaglebank
+  #     POSTGRES_PASSWORD: eaglebank123
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   networks:
+  #     - eaglebank-network
+
+networks:
+  eaglebank-network:
+    driver: bridge
+# volumes:
+#   postgres_data:
