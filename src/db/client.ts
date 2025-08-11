@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 import { PrismaClient } from '@prisma/client';
 
 declare global {
@@ -6,7 +8,7 @@ declare global {
 }
 
 export const prisma =
-  globalThis.__prisma ||
+  (globalThis as any).__prisma ||
   new PrismaClient({
     log:
       process.env.NODE_ENV === 'development'
@@ -16,7 +18,7 @@ export const prisma =
 
 // Prevent multiple instances in development
 if (process.env.NODE_ENV !== 'production') {
-  globalThis.__prisma = prisma;
+  (globalThis as any).__prisma = prisma;
 }
 
 export default prisma;

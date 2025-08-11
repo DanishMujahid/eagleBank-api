@@ -77,7 +77,7 @@ describe('Input Sanitization', () => {
 
   describe('Input Length Validation', () => {
     it('should reject extremely long inputs', async () => {
-      const longString = 'a'.repeat(15000); // //Exceeds 10KB limit (double check)
+      const longString = 'a'.repeat(15000); // Exceeds 10KB limit
       const maliciousInput = {
         name: longString,
         email: 'user@example.com',

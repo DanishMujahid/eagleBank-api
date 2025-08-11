@@ -168,7 +168,7 @@ export const strictSanitizeInput = (
         // Remove any remaining potentially dangerous properties
         const dangerousProps = ['__proto__', 'constructor', 'prototype'];
         dangerousProps.forEach(prop => {
-          if (req.body.hasOwnProperty(prop)) {
+          if (Object.prototype.hasOwnProperty.call(req.body, prop)) {
             delete req.body[prop];
           }
         });

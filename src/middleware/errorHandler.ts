@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { ApiResponse } from '../types';
 
 export interface AppError extends Error {
@@ -10,7 +10,8 @@ export const errorHandler = (
   error: AppError,
   req: Request,
   res: Response,
-  next: NextFunction
+  // eslint-disable-next-line no-unused-vars
+  _next: any
 ): void => {
   const statusCode = error.statusCode || 500;
   const message = error.message || 'Internal Server Error';
@@ -22,6 +23,7 @@ export const errorHandler = (
 
   // Log error in development
   if (process.env.NODE_ENV === 'development') {
+    // eslint-disable-next-line no-console
     console.error('Error:', error);
   }
 
