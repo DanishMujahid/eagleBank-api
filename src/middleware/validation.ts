@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { z, ZodError } from 'zod';
 import { createError } from './errorHandler';
+import { validatePasswordStrength } from '../utils/password';
 
 export const validateRequest = (schema: z.ZodSchema) => {
   return (req: Request, res: Response, next: NextFunction): void => {
@@ -55,12 +56,22 @@ export const validateRequestWithQuery = (
   };
 };
 
+// Custom password validation for Zod
+const passwordSchema = z
+  .string()
+  .min(8, 'Password must be at least 8 characters long')
+  .max(128, 'Password must be less than 128 characters')
+  .refine(password => {
+    const validation = validatePasswordStrength(password);
+    if (!validation.isValid) {
+      throw new Error(validation.error);
+    }
+    return true;
+  }, 'Password does not meet strength requirements');
+
 export const userCreateSchema = z.object({
   email: z.string().email('Invalid email format').min(1, 'Email is required'),
-  password: z
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .max(128, 'Password too long'),
+  password: passwordSchema,
   firstName: z
     .string()
     .min(1, 'First name is required')

@@ -1,18 +1,22 @@
 import app from './app';
 import { prisma } from './db/client';
-
-const PORT = process.env.PORT || 3000;
+import { getEnvConfig } from './utils/env';
 
 async function startServer() {
   try {
+    // Validate environment variables first
+    const config = getEnvConfig();
+    console.log(`🔧 Environment: ${config.NODE_ENV}`);
+    console.log(`🔐 JWT Secret: ${config.JWT_SECRET.substring(0, 8)}...`);
+
     // Test database connection
     await prisma.$connect();
     console.log('✅ Database connected successfully');
 
     // Start server
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`📊 Health check: http://localhost:${PORT}/health`);
+    app.listen(config.PORT, () => {
+      console.log(`🚀 Server running on port ${config.PORT}`);
+      console.log(`📊 Health check: http://localhost:${config.PORT}/health`);
       console.log(`🔧 Setup complete`);
     });
   } catch (error) {

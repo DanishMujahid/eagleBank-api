@@ -1,8 +1,7 @@
 import { Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { Secret, SignOptions } from 'jsonwebtoken';
 import { JwtPayload, AuthenticatedRequest } from '../types';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret';
+import { getEnvConfig } from '../utils/env';
 
 export const authenticateToken = (
   req: AuthenticatedRequest,
@@ -10,22 +9,33 @@ export const authenticateToken = (
   next: NextFunction
 ): void => {
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Extract token from "Bearer <token>"
 
-  if (!token) {
+  if (!authHeader?.startsWith('Bearer ')) {
     res.status(401).json({
       success: false,
-      error: 'Access token required',
+      error: 'Authorization header with Bearer token is required',
     });
     return;
   }
 
+  const token = authHeader.split(' ')[1];
+  const config = getEnvConfig();
+
+  if (!config.JWT_SECRET) {
+    throw new Error('JWT_SECRET is not defined in environment configuration');
+  }
+
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
+    if (typeof token !== 'string') {
+      throw new Error('Token is not a string');
+    }
+    const decoded = jwt.verify(
+      token,
+      config.JWT_SECRET as Secret
+    ) as JwtPayload;
     req.user = decoded;
     next();
   } catch (error) {
-    // Token is invalid, expired, or malformed
     res.status(403).json({
       success: false,
       error: 'Invalid or expired token',
@@ -34,5 +44,26 @@ export const authenticateToken = (
 };
 
 export const generateToken = (payload: JwtPayload): string => {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: '24h' });
+  const config = getEnvConfig();
+
+  if (!config.JWT_SECRET) {
+    throw new Error('JWT_SECRET is not defined in environment configuration');
+  }
+
+  // Ensure expiresIn is a number or a valid string literal for SignOptions
+  let expiresIn: number | undefined = undefined;
+  if (config.JWT_EXPIRES_IN) {
+    const num = Number(config.JWT_EXPIRES_IN);
+    if (!isNaN(num)) {
+      expiresIn = num;
+    } else {
+      // fallback to a default of 24h if not a number
+      expiresIn = 24 * 60 * 60; // 24 hours in seconds
+    }
+  } else {
+    expiresIn = 24 * 60 * 60; // 24 hours in seconds
+  }
+  const options: SignOptions = { expiresIn };
+
+  return jwt.sign(payload, config.JWT_SECRET as Secret, options);
 };
