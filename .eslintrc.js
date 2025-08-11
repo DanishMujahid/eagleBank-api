@@ -8,7 +8,7 @@ module.exports = {
   extends: ['eslint:recommended', 'prettier'],
   rules: {
     // Basic rules
-    'no-console': 'warn',
+    'no-console': 'off',
     'prefer-const': 'error',
     'no-var': 'error',
 
