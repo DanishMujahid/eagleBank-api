@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import { UserService } from '../services/userService';
-import { createError } from '../middleware/errorHandler';
 
 export const createUser = async (
   req: Request,
@@ -18,11 +17,7 @@ export const createUser = async (
       message: 'User created successfully',
     });
   } catch (error) {
-    // If error has statusCode, forward it
-    if (error instanceof Error && 'statusCode' in error) {
-      return next(error);
-    }
-    // Otherwise, wrap it in a 500 internal server error and forward
-    return next(createError('Failed to create user', 500));
+    // Forward error to global error handler
+    next(error);
   }
 };

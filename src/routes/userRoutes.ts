@@ -1,18 +1,6 @@
-import { Request, Response, NextFunction, Router } from 'express';
-import { z } from 'zod';
+import { Router } from 'express';
 import { createUser } from '../controllers/userController';
-import { userCreateSchema } from '../middleware/validation';
-
-export const validateRequest =
-  (schema: z.ZodSchema) =>
-  (req: Request, res: Response, next: NextFunction) => {
-    schema
-      .parseAsync(req.body)
-      .then(() => next())
-      .catch(err => {
-        res.status(400).json({ success: false, error: err.errors });
-      });
-  };
+import { validateRequest, userCreateSchema } from '../middleware/validation';
 
 const router = Router();
 

@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { UserService } from '../services/userService';
 import { generateToken } from '../middleware/auth';
-import { createError } from '../middleware/errorHandler';
 
 interface LoginRequestBody {
   email: string;
@@ -34,9 +33,7 @@ export const login = async (
       message: 'Login successful',
     });
   } catch (error) {
-    if (error instanceof Error && 'statusCode' in error) {
-      return next(error);
-    }
-    return next(createError('Authentication failed', 500));
+    // Forward error to global error handler
+    next(error);
   }
 };
