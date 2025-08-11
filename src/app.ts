@@ -2,10 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import { errorHandler } from './middleware/errorHandler';
+import { sanitizeInput, validateContentType } from './middleware/sanitization';
 
 const app = express();
 
-// Security middleware
+// Security middleware - must be first
 app.use(helmet());
 app.use(cors());
 
@@ -13,7 +14,13 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Request logging in development
+// Input sanitization middleware
+app.use(sanitizeInput);
+
+// Content-Type validation middleware
+app.use(validateContentType);
+
+// Development-only middleware
 if (process.env.NODE_ENV === 'development') {
   app.use((req, res, next) => {
     console.log(`${req.method} ${req.path}`);

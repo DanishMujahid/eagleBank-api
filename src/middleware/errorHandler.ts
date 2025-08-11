@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import { ApiResponse } from "../types";
+import { Request, Response, NextFunction } from 'express';
+import { ApiResponse } from '../types';
 
 export interface AppError extends Error {
   statusCode?: number;
@@ -13,7 +13,7 @@ export const errorHandler = (
   next: NextFunction
 ): void => {
   const statusCode = error.statusCode || 500;
-  const message = error.message || "Internal Server Error";
+  const message = error.message || 'Internal Server Error';
 
   const response: ApiResponse = {
     success: false,
@@ -21,8 +21,8 @@ export const errorHandler = (
   };
 
   // Log error in development
-  if (process.env.NODE_ENV === "development") {
-    console.error("Error:", error);
+  if (process.env.NODE_ENV === 'development') {
+    console.error('Error:', error);
   }
 
   res.status(statusCode).json(response);

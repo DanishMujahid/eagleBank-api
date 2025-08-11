@@ -32,8 +32,8 @@ model Account {
   accountNumber String @unique
   balance   Float    @default(0)
   currency  String   @default("GBP")
-  type      String   @default("CHECKING") // CHECKING, SAVINGS
-  status    String   @default("ACTIVE")  // ACTIVE, SUSPENDED, CLOSED
+  type      String   @default("CHECKING") // CHECKING, SAVINGS, BUSINESS
+  status    String   @default("ACTIVE")  // ACTIVE, SUSPENDED, CLOSED, FROZEN
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -47,10 +47,10 @@ model Account {
 
 model Transaction {
   id          String   @id @default(cuid())
-  amount      Float
-  type        String   // DEBIT, CREDIT, TRANSFER
-  description String?
-  status      String   @default("PENDING") // PENDING, COMPLETED, FAILED, CANCELLED
+  amount      Float    // Positive for credits, negative for debits
+  type        String   // DEBIT, CREDIT, TRANSFER, WITHDRAWAL, DEPOSIT
+  description String?  // Optional description
+  status      String   @default("PENDING") // PENDING, COMPLETED, FAILED, CANCELLED, REVERSED
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

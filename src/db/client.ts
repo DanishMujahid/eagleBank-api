@@ -1,14 +1,20 @@
 import { PrismaClient } from '@prisma/client';
 
 declare global {
-  // Use 'any' to avoid type errors if PrismaClient is not exported directly
-  // or import PrismaClient from the default export if available
-  // @ts-ignore
-  var __prisma: any;
+  // eslint-disable-next-line no-var
+  var __prisma: PrismaClient | undefined;
 }
 
-export const prisma = globalThis.__prisma || new PrismaClient();
+export const prisma =
+  globalThis.__prisma ||
+  new PrismaClient({
+    log:
+      process.env.NODE_ENV === 'development'
+        ? ['query', 'error', 'warn']
+        : ['error'],
+  });
 
+// Prevent multiple instances in development
 if (process.env.NODE_ENV !== 'production') {
   globalThis.__prisma = prisma;
 }
