@@ -63,10 +63,7 @@ const passwordSchema = z
   .max(128, 'Password must be less than 128 characters')
   .refine(password => {
     const validation = validatePasswordStrength(password);
-    if (!validation.isValid) {
-      throw new Error(validation.error);
-    }
-    return true;
+    return validation.isValid;
   }, 'Password does not meet strength requirements');
 
 export const userCreateSchema = z.object({
