@@ -2,6 +2,10 @@
 beforeAll(async () => {
   // Set test environment
   process.env.NODE_ENV = 'test';
+  process.env.DATABASE_URL = 'file:./test.db';
+  process.env.JWT_SECRET = 'test-secret-key-for-testing-only';
+  process.env.JWT_EXPIRES_IN = '1h';
+  process.env.PORT = '3001';
 });
 
 // Global test teardown

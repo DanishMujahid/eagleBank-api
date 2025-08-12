@@ -87,6 +87,28 @@ export const userLoginSchema = z.object({
   password: z.string().min(1, 'Password is required'),
 });
 
+export const userUpdateSchema = z
+  .object({
+    firstName: z
+      .string()
+      .min(1, 'First name is required')
+      .max(50, 'First name too long')
+      .optional(),
+    lastName: z
+      .string()
+      .min(1, 'Last name is required')
+      .max(50, 'Last name too long')
+      .optional(),
+    email: z
+      .string()
+      .email('Invalid email format')
+      .min(1, 'Email is required')
+      .optional(),
+  })
+  .refine(data => Object.keys(data).length > 0, {
+    message: 'At least one field must be provided for update',
+  });
+
 export const accountCreateSchema = z.object({
   accountNumber: z
     .string()
