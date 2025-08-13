@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Eagle Bank API
-  description: REST API for Eagle Bank - User Management, Authentication, and Bank Account Management
+  description: REST API for Eagle Bank - User Management, Authentication, Bank Account Management, and Transaction Management
   version: 1.0.0
   license:
     name: MIT

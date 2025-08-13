@@ -63,37 +63,46 @@ npm run docker:dev
 ## Project Structure
 
 ```
-src/
-├── app.ts                 # Express app configuration & middleware
-├── server.ts              # Server startup & database connection
-├── routes/                # Route definitions
-│   ├── userRoutes.ts      # User management endpoints
-│   ├── authRoutes.ts      # Authentication endpoints
-│   ├── accountRoutes.ts   # Account management endpoints
-│   └── transactionRoutes.ts # Transaction endpoints
-├── controllers/           # Request handling logic
-│   ├── userController.ts
-│   ├── authController.ts
-│   ├── accountController.ts
-│   └── transactionController.ts
-├── services/              # Business logic & database operations
-│   ├── userService.ts
-│   ├── authService.ts
-│   ├── accountService.ts
-│   └── transactionService.ts
-├── middleware/            # Custom middleware
-│   ├── auth.ts            # JWT authentication
-│   ├── errorHandler.ts    # Error handling
-│   └── validation.ts      # Request validation
-├── db/                    # Database configuration
-│   └── client.ts          # Prisma client
-├── types/                 # TypeScript type definitions
-│   └── index.ts
-└── __tests__/             # Test files
-    ├── userService.test.ts
-    ├── accountService.test.ts
-    ├── validation.test.ts
-    └── ...
+EagleBank/
+├── src/                   # Source code
+│   ├── app.ts             # Express app configuration & middleware
+│   ├── server.ts          # Server startup & database connection
+│   ├── routes/            # API route definitions
+│   │   ├── userRoutes.ts      # User management endpoints
+│   │   ├── authRoutes.ts      # Authentication endpoints
+│   │   ├── accountRoutes.ts   # Account management endpoints
+│   │   └── transactionRoutes.ts # Transaction endpoints
+│   ├── controllers/       # Request handling logic
+│   │   ├── userController.ts
+│   │   ├── authController.ts
+│   │   ├── accountController.ts
+│   │   └── transactionController.ts
+│   ├── services/          # Business logic & database operations
+│   │   ├── userService.ts
+│   │   ├── authService.ts
+│   │   ├── accountService.ts
+│   │   └── transactionService.ts
+│   ├── middleware/        # Custom middleware
+│   │   ├── auth.ts        # JWT authentication
+│   │   ├── errorHandler.ts # Error handling
+│   │   └── validation.ts  # Request validation
+│   ├── db/                # Database configuration
+│   │   └── client.ts      # Prisma client
+│   ├── types/             # TypeScript type definitions
+│   │   └── index.ts
+│   └── __tests__/         # Test files
+│       ├── userService.test.ts
+│       ├── accountService.test.ts
+│       ├── validation.test.ts
+│       └── ...
+├── prisma/                # Database schema and migrations
+│   └── schema.prisma      # Prisma schema definition
+├── EagleBank_API_Postman_Collection.json  # Complete Postman collection
+├── README.md              # This documentation
+├── package.json           # Dependencies and scripts
+├── tsconfig.json          # TypeScript configuration
+├── .env.example           # Environment variables template
+└── Dockerfile             # Docker configuration
 ```
 
 ## Prerequisites
@@ -210,6 +219,30 @@ src/
 - `npm run docker:clean` - Clean up Docker resources
 
 ## 🧪 Complete API Testing Guide
+
+### **Option 1: Postman Collection (Recommended)**
+
+We've included a complete Postman collection for easy testing:
+
+1. **Import the Collection**: Open Postman and import `EagleBank_API_Postman_Collection.json`
+2. **Set Environment**: Create a new environment with the variables below
+3. **Run Requests**: Execute requests in order - JWT tokens are automatically saved!
+
+#### **Required Environment Variables for Postman:**
+
+| Variable        | Description          | Default                 |
+| --------------- | -------------------- | ----------------------- |
+| `baseUrl`       | API base URL         | `http://localhost:3000` |
+| `userEmail`     | Test user email      | `test.user@example.com` |
+| `userPassword`  | Test user password   | `SecurePassword123`     |
+| `userFirstName` | Test user first name | `Test`                  |
+| `userLastName`  | Test user last name  | `User`                  |
+
+**Note**: The collection automatically generates unique values for testing.
+
+### **Option 2: Manual Testing with curl**
+
+If you prefer command-line testing:
 
 ### **Prerequisites**
 
