@@ -6,6 +6,7 @@ import { sanitizeInput, validateContentType } from './middleware/sanitization';
 import userRoutes from './routes/userRoutes';
 import authRoutes from './routes/authRoutes';
 import accountRoutes from './routes/accountRoutes';
+import transactionRoutes from './routes/transactionRoutes';
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.get('/health', (req, res) => {
 app.use('/v1/users', userRoutes);
 app.use('/v1/auth', authRoutes);
 app.use('/v1/accounts', accountRoutes);
+app.use('/v1', transactionRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {

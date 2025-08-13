@@ -22,7 +22,6 @@ model User {
 
   // Relations
   accounts     Account[]
-  transactions Transaction[]
 
   @@map("users")
 }
@@ -46,19 +45,18 @@ model Account {
 }
 
 model Transaction {
-  id          String   @id @default(cuid())
-  amount      Float    // Positive for credits, negative for debits
-  type        String   // DEBIT, CREDIT, TRANSFER, WITHDRAWAL, DEPOSIT
-  description String?  // Optional description
-  status      String   @default("PENDING") // PENDING, COMPLETED, FAILED, CANCELLED, REVERSED
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String   @id @default(cuid())
+  type          String   // DEPOSIT, WITHDRAWAL
+  amount        Float    // Positive amount
+  description   String?  // Optional description
+  balanceBefore Float    // Account balance before transaction
+  balanceAfter  Float    // Account balance after transaction
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   // Relations
   accountId String
   account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  userId    String
-  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("transactions")
 } 

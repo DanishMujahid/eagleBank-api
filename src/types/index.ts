@@ -35,12 +35,12 @@ export interface Account {
 
 export interface Transaction {
   id: string;
+  type: 'DEPOSIT' | 'WITHDRAWAL';
   amount: number;
-  type: string;
   description?: string;
-  status: string;
   accountId: string;
-  userId: string;
+  balanceBefore: number;
+  balanceAfter: number;
   createdAt: Date;
   updatedAt: Date;
 }
