@@ -5,18 +5,17 @@ A production-ready TypeScript REST API for a complete banking application built 
 ## Features
 
 - 🔐 JWT-based authentication with bcrypt password hashing
-- 👥 Complete user management (CRUD operations)
+- 👥 User management (CRUD operations)
 - 🏦 Bank account management with unique account numbers
-- 💰 Real-time transaction processing (deposits/withdrawals)
-- 🛡️ Comprehensive security (Helmet, CORS, input validation)
+- 💰 Transaction processing (deposits/withdrawals)
+- 🛡️ Security features (Helmet, CORS, input validation)
 - ✅ Request validation with Zod schemas
 - 🗄️ Database management with Prisma ORM
 - 🚀 TypeScript with strict mode
-- 📝 Centralized error handling
+- 📝 Error handling
 - 🏗️ Layered architecture (routes, controllers, services)
-- 🧪 Comprehensive testing suite
-- 🐳 Docker support for consistent development
-- 📊 Full audit trail for all financial operations
+- 🧪 Testing suite
+- 🐳 Docker support
 
 ## Tech Stack
 
@@ -65,44 +64,22 @@ npm run docker:dev
 ```
 EagleBank/
 ├── src/                   # Source code
-│   ├── app.ts             # Express app configuration & middleware
-│   ├── server.ts          # Server startup & database connection
-│   ├── routes/            # API route definitions
-│   │   ├── userRoutes.ts      # User management endpoints
-│   │   ├── authRoutes.ts      # Authentication endpoints
-│   │   ├── accountRoutes.ts   # Account management endpoints
-│   │   └── transactionRoutes.ts # Transaction endpoints
-│   ├── controllers/       # Request handling logic
-│   │   ├── userController.ts
-│   │   ├── authController.ts
-│   │   ├── accountController.ts
-│   │   └── transactionController.ts
-│   ├── services/          # Business logic & database operations
-│   │   ├── userService.ts
-│   │   ├── authService.ts
-│   │   ├── accountService.ts
-│   │   └── transactionService.ts
+│   ├── app.ts             # Express app configuration
+│   ├── server.ts          # Server startup
+│   ├── routes/            # API routes
+│   ├── controllers/       # Request handlers
+│   ├── services/          # Business logic
 │   ├── middleware/        # Custom middleware
-│   │   ├── auth.ts        # JWT authentication
-│   │   ├── errorHandler.ts # Error handling
-│   │   └── validation.ts  # Request validation
-│   ├── db/                # Database configuration
-│   │   └── client.ts      # Prisma client
-│   ├── types/             # TypeScript type definitions
-│   │   └── index.ts
-│   └── __tests__/         # Test files
-│       ├── userService.test.ts
-│       ├── accountService.test.ts
-│       ├── validation.test.ts
-│       └── ...
-├── prisma/                # Database schema and migrations
-│   └── schema.prisma      # Prisma schema definition
-├── EagleBank_API_Postman_Collection.json  # Complete Postman collection
-├── README.md              # This documentation
-├── package.json           # Dependencies and scripts
-├── tsconfig.json          # TypeScript configuration
-├── .env.example           # Environment variables template
-└── Dockerfile             # Docker configuration
+│   ├── db/                # Database config
+│   ├── types/             # TypeScript types
+│   └── __tests__/         # Tests
+├── prisma/                # Database schema
+├── EagleBank_API_Postman_Collection.json  # Postman collection
+├── README.md              # Documentation
+├── package.json           # Dependencies
+├── tsconfig.json          # TypeScript config
+├── .env.example           # Environment template
+└── Dockerfile             # Docker config
 ```
 
 ## Prerequisites
@@ -222,23 +199,13 @@ EagleBank/
 
 ### **Option 1: Postman Collection (Recommended)**
 
-We've included a complete Postman collection for easy testing:
+We've included a Postman collection for easy testing:
 
 1. **Import the Collection**: Open Postman and import `EagleBank_API_Postman_Collection.json`
-2. **Set Environment**: Create a new environment with the variables below
-3. **Run Requests**: Execute requests in order - JWT tokens are automatically saved!
+2. **Set Environment**: Create a new environment with `baseUrl: http://localhost:3000`
+3. **Run Requests**: Execute requests in order
 
-#### **Required Environment Variables for Postman:**
-
-| Variable        | Description          | Default                 |
-| --------------- | -------------------- | ----------------------- |
-| `baseUrl`       | API base URL         | `http://localhost:3000` |
-| `userEmail`     | Test user email      | `test.user@example.com` |
-| `userPassword`  | Test user password   | `SecurePassword123`     |
-| `userFirstName` | Test user first name | `Test`                  |
-| `userLastName`  | Test user last name  | `User`                  |
-
-**Note**: The collection automatically generates unique values for testing.
+**Note**: The collection automatically saves JWT tokens and IDs for easier testing.
 
 ### **Option 2: Manual Testing with curl**
 
@@ -670,17 +637,19 @@ npm run test:coverage
 - ✅ Validation schemas
 - ✅ Error handling
 
+**Note**: Tests focus on core functionality and business logic validation.
+
 ## Development
 
-The project is fully implemented with:
+The project implements:
 
-1. ✅ **User Management**: Complete CRUD operations
+1. ✅ **User Management**: CRUD operations
 2. ✅ **Authentication**: JWT-based login system
-3. ✅ **Account Management**: Bank account CRUD operations
+3. ✅ **Account Management**: Bank account operations
 4. ✅ **Transaction Processing**: Deposits, withdrawals, balance tracking
 5. ✅ **Security**: Input validation, authentication, authorization
-6. ✅ **Testing**: Comprehensive test suite
-7. ✅ **Documentation**: Complete API documentation
+6. ✅ **Testing**: Test suite
+7. ✅ **Documentation**: API documentation
 
 ## Contributing
 
@@ -690,6 +659,24 @@ The project is fully implemented with:
 4. Handle errors consistently
 5. Add tests for new features
 6. Update this README for new endpoints
+
+## TODO
+
+- [ ] Add rate limiting for API endpoints
+- [ ] Implement account transfer between users
+- [ ] Add more transaction types (e.g., transfers)
+- [ ] Consider adding webhook support for real-time notifications
+
+## Notes
+
+This project was built as a tech test to demonstrate:
+
+- Building a complete banking API from scratch
+- Implementing proper authentication and authorization
+- Handling financial transactions with data integrity
+- Writing clean, maintainable code with TypeScript
+
+The most challenging part was ensuring atomic transactions when updating account balances - using Prisma's `$transaction` was key to maintaining data consistency.
 
 ## License
 
