@@ -63,10 +63,7 @@ const passwordSchema = z
   .max(128, 'Password must be less than 128 characters')
   .refine(password => {
     const validation = validatePasswordStrength(password);
-    if (!validation.isValid) {
-      throw new Error(validation.error);
-    }
-    return true;
+    return validation.isValid;
   }, 'Password does not meet strength requirements');
 
 export const userCreateSchema = z.object({
@@ -121,6 +118,28 @@ export const accountCreateSchema = z.object({
     message: 'Invalid account type',
   }),
 });
+
+export const accountUpdateSchema = z
+  .object({
+    currency: z
+      .enum(['GBP', 'USD', 'EUR'], {
+        message: 'Invalid currency. Must be GBP, USD, or EUR',
+      })
+      .optional(),
+    type: z
+      .enum(['CHECKING', 'SAVINGS', 'BUSINESS'], {
+        message: 'Invalid account type',
+      })
+      .optional(),
+    status: z
+      .enum(['ACTIVE', 'SUSPENDED', 'CLOSED', 'FROZEN'], {
+        message: 'Invalid account status',
+      })
+      .optional(),
+  })
+  .refine(data => Object.keys(data).length > 0, {
+    message: 'At least one field must be provided for update',
+  });
 
 export const transactionCreateSchema = z.object({
   amount: z

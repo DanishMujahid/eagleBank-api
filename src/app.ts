@@ -5,6 +5,7 @@ import { errorHandler } from './middleware/errorHandler';
 import { sanitizeInput, validateContentType } from './middleware/sanitization';
 import userRoutes from './routes/userRoutes';
 import authRoutes from './routes/authRoutes';
+import accountRoutes from './routes/accountRoutes';
 
 const app = express();
 
@@ -38,6 +39,7 @@ app.get('/health', (req, res) => {
 // API routes
 app.use('/v1/users', userRoutes);
 app.use('/v1/auth', authRoutes);
+app.use('/v1/accounts', accountRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {
@@ -47,7 +49,7 @@ app.use('*', (req, res) => {
   });
 });
 
-// Error handling middleware (must be last)
+// Error handling middleware
 app.use(errorHandler);
 
 export default app;
