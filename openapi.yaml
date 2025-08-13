@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Eagle Bank API
-  description: REST API for Eagle Bank - User Management, Authentication, and Bank Account Management
+  description: REST API for Eagle Bank - User Management, Authentication, Bank Account Management, and Transaction Management
   version: 1.0.0
   license:
     name: MIT
@@ -332,6 +332,239 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /v1/accounts/{accountId}/transactions:
+    post:
+      summary: Create a transaction
+      description: Create a deposit or withdrawal transaction for a specific account
+      tags:
+        - Transactions
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionCreateRequest'
+      responses:
+        '201':
+          description: Transaction created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionCreateResponse'
+        '400':
+          description: Bad Request - Invalid transaction data or insufficient funds
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - JWT token required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden - User can only create transactions on their own accounts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found - Account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: Get account transactions
+      description: Retrieve all transactions for a specific account with pagination
+      tags:
+        - Transactions
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the account
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number for pagination
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+          description: Number of transactions per page
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [DEPOSIT, WITHDRAWAL]
+          description: Filter by transaction type
+      responses:
+        '200':
+          description: Transactions retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionsListResponse'
+        '401':
+          description: Unauthorized - JWT token required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found - Account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /v1/accounts/{accountId}/transactions/{transactionId}:
+    get:
+      summary: Get transaction details
+      description: Retrieve details of a specific transaction (user must own the account)
+      tags:
+        - Transactions
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the account
+        - name: transactionId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the transaction
+      responses:
+        '200':
+          description: Transaction retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionDetailResponse'
+        '400':
+          description: Bad Request - Account ID and Transaction ID are required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found - Transaction not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /v1/transactions:
+    get:
+      summary: Get user transaction history
+      description: Retrieve user's complete transaction history across all accounts with filtering and pagination
+      tags:
+        - Transactions
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number for pagination
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+          description: Number of transactions per page
+        - name: accountId
+          in: query
+          schema:
+            type: string
+          description: Filter by specific account ID
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [DEPOSIT, WITHDRAWAL]
+          description: Filter by transaction type
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Filter transactions from this date (ISO format)
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Filter transactions until this date (ISO format)
+      responses:
+        '200':
+          description: Transaction history retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionHistoryResponse'
+        '401':
+          description: Unauthorized - JWT token required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
 components:
   schemas:
     UserCreateRequest:
@@ -598,6 +831,163 @@ components:
           type: string
           example: 'Account deleted successfully'
 
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique transaction identifier
+          example: 'cme944g89000230qthpxeryn9'
+        type:
+          type: string
+          enum: [DEPOSIT, WITHDRAWAL]
+          description: Transaction type
+          example: 'DEPOSIT'
+        amount:
+          type: number
+          format: float
+          description: Transaction amount
+          example: 100.50
+        description:
+          type: string
+          description: Transaction description
+          example: 'Salary deposit'
+        accountId:
+          type: string
+          description: ID of the account this transaction belongs to
+          example: 'cme944g89000230qthpxeryn8'
+        balanceBefore:
+          type: number
+          format: float
+          description: Account balance before transaction
+          example: 500.00
+        balanceAfter:
+          type: number
+          format: float
+          description: Account balance after transaction
+          example: 600.50
+        createdAt:
+          type: string
+          format: date-time
+          description: Transaction creation timestamp
+          example: '2025-08-12T22:30:00.000Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Transaction last update timestamp
+          example: '2025-08-12T22:30:00.000Z'
+
+    TransactionCreateRequest:
+      type: object
+      required:
+        - type
+        - amount
+      properties:
+        type:
+          type: string
+          enum: [DEPOSIT, WITHDRAWAL]
+          description: Transaction type
+          example: 'DEPOSIT'
+        amount:
+          type: number
+          format: float
+          minimum: 0.01
+          maximum: 1000000
+          description: Transaction amount (positive number)
+          example: 100.50
+        description:
+          type: string
+          maxLength: 255
+          description: Optional transaction description
+          example: 'Salary deposit'
+
+    TransactionCreateResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/Transaction'
+        message:
+          type: string
+          example: 'Transaction created successfully'
+
+    TransactionDetailResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          allOf:
+            - $ref: '#/components/schemas/Transaction'
+            - type: object
+              properties:
+                account:
+                  $ref: '#/components/schemas/Account'
+        message:
+          type: string
+          example: 'Transaction retrieved successfully'
+
+    TransactionsListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Transaction'
+        pagination:
+          type: object
+          properties:
+            page:
+              type: integer
+              example: 1
+            limit:
+              type: integer
+              example: 50
+            total:
+              type: integer
+              example: 150
+            pages:
+              type: integer
+              example: 3
+        message:
+          type: string
+          example: 'Transactions retrieved successfully'
+
+    TransactionHistoryResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Transaction'
+        pagination:
+          type: object
+          properties:
+            page:
+              type: integer
+              example: 1
+            limit:
+              type: integer
+              example: 50
+            total:
+              type: integer
+              example: 300
+            pages:
+              type: integer
+              example: 6
+        message:
+          type: string
+          example: 'Transaction history retrieved successfully'
+
     ErrorResponse:
       type: object
       properties:
@@ -636,3 +1026,5 @@ tags:
     description: User authentication operations
   - name: Accounts
     description: Bank account management operations
+  - name: Transactions
+    description: Banking transaction operations

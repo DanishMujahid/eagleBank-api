@@ -144,11 +144,13 @@ export const accountUpdateSchema = z
 export const transactionCreateSchema = z.object({
   amount: z
     .number()
-    .finite('Amount must be a valid number')
-    .refine(val => val !== 0, 'Amount cannot be zero'),
-  type: z.enum(['DEBIT', 'CREDIT', 'TRANSFER', 'WITHDRAWAL', 'DEPOSIT'], {
-    message: 'Invalid transaction type',
+    .positive('Amount must be positive')
+    .max(1000000, 'Amount cannot exceed 1,000,000'),
+  type: z.enum(['DEPOSIT', 'WITHDRAWAL'], {
+    message: 'Invalid transaction type. Must be DEPOSIT or WITHDRAWAL',
   }),
-  description: z.string().max(500, 'Description too long').optional(),
-  accountId: z.string().min(1, 'Account ID is required'),
+  description: z
+    .string()
+    .max(255, 'Description must be less than 255 characters')
+    .optional(),
 });
